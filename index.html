@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>A National Interactive Housing Equity Platform</title>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+  <!-- =========================
+       Top Navigation (single-page)
+  ========================== -->
+  <header class="topbar">
+
+    <!-- Logo area (scroll away) -->
+    <div class="logo-bar">
+      <div class="logo">
+        <img src="images/hip.png" alt="Platform Logo">
+      </div>
+    </div>
+  </header>
+  <!-- Real Navbar -->
+  <div class="nav-bar">
+    <nav class="topnav">
+      <a href="#instructions">INSTRUCTIONS</a>
+      <a href="#explore-map">INTERACTIVE MAPS</a>
+      <a href="#research-modules">RESEARCH MODULES</a>
+      <a href="#findings">FINDINGS</a>
+    </nav>
+  </div>
+
+  <!-- =========================
+       Main Paper Container
+  ========================== -->
+  <main>
+
+    <!-- 1️⃣ Landing Page -->
+    <section id="landing" class="hero">
+      <h1>
+        Rental Subsidy and Housing Inequality <br>
+        in the United States
+      </h1>
+      <p class="kicker">A National Interactive Housing Equity Platform</p>
+      <div class="hero-actions">
+        <a class="btn primary" href="#explore-map">Explore the Map</a>
+        <a class="btn" href="#research-modules">Explore Research Modules</a>
+      </div>
+
+      <div class="meta">
+        <div><strong>Scope:</strong> United States (ZIP / Metro)</div>
+        <div><strong>Focus:</strong> Rental subsidy, rent burden, spatial equity</div>
+      </div>
+    </section>
+
+    <div class="container">
+      <!-- Home page → Background (doc) -->
+      <section id="background" class="section">
+        <h2>BACKGROUND</h2>
+
+        <h3>Scope of U.S. Rental Subsidy and Study</h3>
+        <p>
+          This platform is an interactive research tool examining the federal rental assistance system in the United
+          States.
+          Three major programs – Housing Choice Vouchers, Section 8 Project-Based Rental Assistance, and Public Housing
+          – assist about 84 percent of the households receiving federal rental assistance.
+          The platform integrates national rental assistance data with local socioeconomic indicators to provide a
+          spatial understanding of subsidy distribution and voucher reliance across all 50 states.
+        </p>
+
+        <p>
+          Much of the subsidized housing stock was developed before 1980 and operates through expiring contracts rather
+          than permanent affordability.
+          As contracts terminate and rental markets become increasingly unaffordable, Housing Choice Vouchers (HCV) have
+          become the primary federal safety net.
+          These shifts create uneven spatial risks that require integrated, accessible analysis.
+        </p>
+
+        <h3>Website Objective</h3>
+        <ol>
+          <li>Aggregate national rental subsidy datasets with local contextual indicators into a unified platform.</li>
+          <li>Visualize subsidy distribution and rental market conditions at multiple geographic scales.</li>
+          <li>Identify spatial mismatches between subsidy loss, housing need, and market rent pressures.</li>
+          <li>Support focused research modules and policy scenario analysis for equity-oriented decision making.</li>
+        </ol>
+      </section>
+
+      <!-- Background → website instruction (doc) -->
+      <section id="instructions" class="section">
+        <h2>How to Use This Website</h2>
+
+        <div class="callout">
+          <ol>
+            <li><strong>Start with the Interactive Maps</strong> to observe national and metro patterns.</li>
+            <li><strong>Select variables</strong> (rent, subsidy, gap, ratio) and inspect ZIP profiles.</li>
+            <li><strong>Review “Key Patterns Observed”</strong> to see hypothesis-like prompts.</li>
+            <li><strong>Enter Research Modules</strong> to run targeted analyses and compare regions.</li>
+            <li><strong>Use Compare Cities</strong> for cross-metro benchmarking.</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- =========================
+       2 Explore the Map (doc)
+       Interactive Maps (from metropolitan/rural to census level)
+       - Single dataset explorer
+       - Multi-dataset explorer and analysis (left: rental + right: context)
+    ========================== -->
+      <section id="explore-map" class="section">
+        <h2>Interactive Maps</h2>
+        <p class="lead">
+          This unified explorer supports both <strong>single dataset</strong> exploration and optional
+          <strong>context layer overlay</strong> for additional spatial interpretation.
+        </p>
+
+        <section id="map-section" class="subsection">
+          <h3>Interactive Data Explorer</h3>
+
+          <div class="map-layout merged-layout">
+
+            <!-- LEFT: Main dataset controls -->
+            <aside id="controls" class="panel" aria-label="Main dataset controls">
+              <h4>Main Dataset Controls</h4>
+
+              <label class="field">
+                <span>Geography</span>
+                <select id="geoSelect">
+                  <option value="national">National</option>
+                  <option value="metro">Metro</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>Year</span>
+                <select id="yearSelect">
+                  <option value="2025">2025</option>
+                  <option value="2024">2024</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>Rent Source</span>
+                <select id="rentSourceSelect">
+                  <option value="acs">ACS</option>
+                  <option value="zillow">Zillow</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>Subsidy Type</span>
+                <select id="subsidyTypeSelect">
+                  <option value="fmr">FMR</option>
+                  <option value="safmr">SAFMR</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>Main Variable</span>
+                <select id="variableSelect">
+                  <option value="rent">Market Rent</option>
+                  <option value="subsidy">Subsidy Level</option>
+                  <option value="gap">Affordability Gap</option>
+                  <option value="ratio">Subsidy-to-Rent Ratio</option>
+                  <option value="voucher_density">Voucher Density</option>
+                </select>
+              </label>
+
+              <div class="divider"></div>
+
+              <p class="hint">
+                This panel controls the main dataset shown on the map.
+              </p>
+            </aside>
+
+            <!-- RIGHT: Context layer + neighborhood profile -->
+            <aside id="profile" class="panel" aria-label="Context layer and Neighborhood Profile">
+
+              <div class="panel-header">
+                <h4>Context Layer</h4>
+                <p class="muted">
+                  Optional overlay. Leave as “None” for single dataset exploration.
+                </p>
+              </div>
+
+              <label class="field">
+                <span>Overlay Context Data</span>
+                <select id="contextLayerSelect">
+                  <option value="none">None</option>
+                  <option value="poverty">Poverty Rate</option>
+                  <option value="race">Race Composition</option>
+                  <option value="opportunity">Opportunity Proxy</option>
+                  <option value="school">School Quality Proxy</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>Overlay Style</span>
+                <select id="contextStyleSelect">
+                  <option value="fill">Transparent Fill Overlay</option>
+                  <option value="outline">Outline</option>
+                  <option value="pattern">Pattern / Hatch (future)</option>
+                </select>
+              </label>
+
+              <div class="divider"></div>
+
+              <h4>Neighborhood Profile</h4>
+              <div id="profileContent" class="profile-content">
+                <p class="muted">Select a ZIP on the map to view details.</p>
+              </div>
+
+              <div class="mini-figure">
+                <canvas id="miniTrendChart" aria-label="Mini trend chart"></canvas>
+              </div>
+            </aside>
+
+            <!-- CENTER: Unified map -->
+            <div class="panel map-panel" aria-label="Unified map explorer">
+              <div class="panel-header">
+                <h4>Unified Explorer</h4>
+                <p class="muted">
+                  View the main housing variable and optionally overlay a contextual layer.
+                </p>
+              </div>
+
+              <div id="map" class="map-canvas"></div>
+
+              <div id="summaryMetrics" class="summary">
+                <!-- JS will populate summary metrics -->
+              </div>
+            </div>
+
+
+
+          </div>
+        </section>
+      </section>
+
+      <!-- =========================
+       3 From Exploration to Questions (doc)
+    ========================== -->
+      <section id="patterns" class="section">
+        <h2>From Exploration to Questions</h2>
+        <p class="lead">
+          The platform highlights descriptive patterns that motivate deeper investigation.
+        </p>
+
+        <h3>Key Patterns Observed</h3>
+        <div class="cards">
+          <div class="card">
+            <h4>Pattern 1</h4>
+            <p>High-rent coastal ZIPs show larger affordability gaps.</p>
+          </div>
+          <div class="card">
+            <h4>Pattern 2</h4>
+            <p>Some low-income areas receive relatively aligned subsidy levels.</p>
+          </div>
+          <div class="card">
+            <h4>Pattern 3</h4>
+            <p>Opportunity-rich suburbs show limited voucher coverage.</p>
+          </div>
+        </div>
+
+        <div class="cta-row">
+          <a class="btn primary" href="#research-modules">Explore Research Modules</a>
+        </div>
+      </section>
+
+      <!-- =========================
+       Research Modules (doc)
+       - Gap Distribution
+       - Poverty Alignment
+       - Opportunity Access
+       - Policy Simulation
+    ========================== -->
+      <section id="research-modules" class="section">
+        <h2>Research Modules</h2>
+        <p class="lead">
+          Each module supports interactive analysis. Users can select a region (national / metro / selected area) and
+          run targeted summaries.
+        </p>
+
+        <!-- Module 1 -->
+        <section id="gap-module" class="subsection">
+          <h3>Module 1 — Affordability Gap Distribution</h3>
+          <p class="question">
+            <strong>Research question:</strong> How widespread is the mismatch between market rent and subsidy level?
+          </p>
+
+          <div class="module-grid">
+            <div class="panel">
+              <h4>Interactive Controls</h4>
+
+              <label class="field">
+                <span>Region</span>
+                <select id="gapRegionSelect">
+                  <option value="national">National</option>
+                  <option value="selected">Selected on map</option>
+                </select>
+              </label>
+
+              <button id="runGap" class="btn">Run Analysis</button>
+
+              <ul class="bullets muted">
+                <li>Gap distribution histogram</li>
+                <li>Gap by rent percentile</li>
+                <li>Gap by metro</li>
+                <li>% ZIP with negative gap</li>
+              </ul>
+            </div>
+
+            <div class="panel figure">
+              <h4>Output: Distribution</h4>
+              <canvas id="gapChart" aria-label="Gap distribution chart"></canvas>
+            </div>
+
+            <div class="panel figure">
+              <h4>Output: Structural Summary</h4>
+              <div id="gapSummary" class="output-box">
+                <p class="muted">Click “Run Analysis” to populate summary.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Module 2 -->
+        <section id="poverty-module" class="subsection">
+          <h3>Module 2 — Subsidy & Poverty Alignment</h3>
+          <p class="question">
+            <strong>Research question:</strong> Is subsidy aligned with socioeconomic need?
+          </p>
+
+          <div class="module-grid">
+            <div class="panel">
+              <h4>Interactive Controls</h4>
+
+              <label class="field">
+                <span>Model</span>
+                <select id="povertyModelSelect">
+                  <option value="corr">Correlation</option>
+                  <option value="ols">OLS Regression</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>Decile Split</span>
+                <select id="povertyDecileSelect">
+                  <option value="10">10 deciles</option>
+                  <option value="5">5 groups</option>
+                </select>
+              </label>
+
+              <button id="runPoverty" class="btn">Run Analysis</button>
+
+              <ul class="bullets muted">
+                <li>Correlation: subsidy vs poverty</li>
+                <li>OLS regression model</li>
+                <li>Decile comparison</li>
+                <li>Spatial clustering (extendable)</li>
+              </ul>
+            </div>
+
+            <div class="panel figure">
+              <h4>Output: Scatter / Fit</h4>
+              <canvas id="povertyChart" aria-label="Subsidy poverty chart"></canvas>
+            </div>
+
+            <div class="panel figure">
+              <h4>Output: Misalignment Zones</h4>
+              <div id="povertySummary" class="output-box">
+                <p class="muted">Run analysis to generate misalignment interpretation.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Module 3 -->
+        <section id="opportunity-module" class="subsection">
+          <h3>Module 3 — Opportunity Access & Segregation</h3>
+          <p class="question">
+            <strong>Research question:</strong> Does subsidy improve access to opportunity-rich neighborhoods?
+          </p>
+
+          <div class="module-grid">
+            <div class="panel">
+              <h4>Interactive Controls</h4>
+
+              <label class="field">
+                <span>Opportunity Proxy</span>
+                <select id="opportunityProxySelect">
+                  <option value="index">Opportunity Index</option>
+                  <option value="school">School Quality Proxy</option>
+                </select>
+              </label>
+
+              <button id="runOpportunity" class="btn">Run Analysis</button>
+
+              <ul class="bullets muted">
+                <li>Subsidy coverage vs opportunity</li>
+                <li>Voucher density vs school proxy</li>
+                <li>Race composition comparison</li>
+              </ul>
+            </div>
+
+            <div class="panel figure">
+              <h4>Output: Equity Index</h4>
+              <canvas id="opportunityChart" aria-label="Opportunity access chart"></canvas>
+            </div>
+
+            <div class="panel figure">
+              <h4>Output: Access Disparity Map (Placeholder)</h4>
+              <div id="opportunityMap" class="map-canvas small"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Module 4 -->
+        <section id="simulation-module" class="subsection">
+          <h3>Module 4 — Policy Scenario Simulation</h3>
+          <p class="question">
+            <strong>Research question:</strong> What happens if policy parameters change?
+          </p>
+
+          <div class="module-grid">
+            <div class="panel">
+              <h4>Scenario Controls</h4>
+
+              <label class="field">
+                <span>Scenario</span>
+                <select id="scenarioSelect">
+                  <option value="increase">Increase subsidy by X%</option>
+                  <option value="switch">Switch to SAFMR nationally</option>
+                  <option value="target">Target top opportunity quartile</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>Increase (%)</span>
+                <input type="range" id="subsidySlider" min="0" max="50" value="0" />
+                <span id="sliderValue" class="muted">0%</span>
+              </label>
+
+              <button id="runSimulation" class="btn">Run Simulation</button>
+
+              <ul class="bullets muted">
+                <li>Gap reduction</li>
+                <li>Budget change</li>
+                <li>Segregation impact (extendable)</li>
+              </ul>
+            </div>
+
+            <div class="panel figure">
+              <h4>Output: Scenario Results</h4>
+              <canvas id="simulationChart" aria-label="Policy simulation chart"></canvas>
+            </div>
+
+            <div class="panel figure">
+              <h4>Interpretation</h4>
+              <div id="simulationSummary" class="output-box">
+                <p class="muted">Run simulation to populate interpretation.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- =========================
+       Extra interactive tool: Compare Cities (doc)
+    ========================== -->
+      <section id="compare-cities" class="section">
+        <h2>Compare Cities</h2>
+        <p class="lead">
+          Comparative metro analysis using standardized indicators:
+          <strong>Gap average</strong>, <strong>Inequality index</strong>, and <strong>Alignment score</strong>.
+        </p>
+
+        <div class="module-grid">
+          <div class="panel">
+            <h3>City Selector</h3>
+            <label class="field">
+              <span>City A</span>
+              <select id="cityASelect">
+                <option value="phl">Philadelphia</option>
+                <option value="nyc">New York</option>
+                <option value="la">Los Angeles</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>City B</span>
+              <select id="cityBSelect">
+                <option value="nyc">New York</option>
+                <option value="phl">Philadelphia</option>
+                <option value="la">Los Angeles</option>
+              </select>
+            </label>
+
+            <button id="runCompare" class="btn">Compare</button>
+          </div>
+
+          <div class="panel figure">
+            <h3>Comparison Results</h3>
+            <canvas id="compareChart" aria-label="Compare cities chart"></canvas>
+          </div>
+
+          <div class="panel figure">
+            <h3>Summary</h3>
+            <div id="compareSummary" class="output-box">
+              <p class="muted">Click “Compare” to populate summary.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================
+       4 Interpretation & Structural Findings (doc)
+    ========================== -->
+      <section id="findings" class="section">
+        <h2>Findings</h2>
+        <p class="lead">
+          This section summarizes structural findings drawn from descriptive exploration and module-based analyses.
+        </p>
+
+        <ul class="findings">
+          <li><strong>Mismatch:</strong> High-rent regions often exhibit systematic subsidy shortfalls.</li>
+          <li><strong>Alignment:</strong> Alignment can be stronger in some low-income areas, but varies across metros.
+          </li>
+          <li><strong>Opportunity:</strong> Voucher coverage may be limited in opportunity-rich suburbs.</li>
+          <li><strong>Policy leverage:</strong> Scenario simulations clarify trade-offs between budget and equity
+            outcomes.</li>
+        </ul>
+      </section>
+
+      <section id="data-method" class="section">
+        <h2>Data & Method</h2>
+
+        <h3>Data Sources</h3>
+        <ul>
+          <li>HUD voucher-related datasets</li>
+          <li>FMR / SAFMR</li>
+          <li>ACS rent indicators</li>
+          <li>Zillow rent indicators (optional)</li>
+          <li>Census contextual measures (poverty, demographics)</li>
+        </ul>
+
+        <h3>Core Measures</h3>
+        <ul>
+          <li><strong>Affordability Gap:</strong> Market Rent − Subsidy</li>
+          <li><strong>Alignment Ratio:</strong> Subsidy / Market Rent</li>
+          <li><strong>Voucher Density:</strong> Vouchers / renter households (or proxy)</li>
+          <li><strong>Inequality Index:</strong> e.g., distributional measure (extendable)</li>
+        </ul>
+
+        <h3>Notes on Interpretation</h3>
+        <p class="muted">
+          This platform is designed for research exploration and comparison. Measures depend on data definitions,
+          geographic units,
+          and year availability.
+        </p>
+      </section>
+
+      <section id="technical-doc" class="section">
+        <h2>Technical Documentation</h2>
+
+        <h3>Architecture</h3>
+        <ul>
+          <li>Single-page structure (scroll-based sections)</li>
+          <li>Leaflet for interactive maps</li>
+          <li>Chart.js for plots</li>
+          <li>Modular JS files by research module</li>
+        </ul>
+
+        <h3>Reproducibility</h3>
+        <ul>
+          <li>Data preprocessing scripts (to be linked)</li>
+          <li>Versioning and update schedule (to be added)</li>
+          <li>Limitations and assumptions (to be added)</li>
+        </ul>
+
+        <p class="muted">
+          Next step: wire the existing JS modules to the new controls (<code>runGap</code>, <code>runPoverty</code>,
+          etc.).
+        </p>
+      </section>
+
+      <footer class="footer">
+        <p class="muted">© <span id="yearNow"></span> Housing Equity Platform · Built for research use.</p>
+      </footer>
+
+  </main>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <!-- Your JS (keep your existing modules; we will wire events next) -->
+  <script src="js/data.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/modules/gap.js"></script>
+  <script src="js/modules/poverty.js"></script>
+  <script src="js/modules/opportunity.js"></script>
+  <script src="js/modules/simulation.js"></script>
+  <script src="js/main.js"></script>
+
+  <script>
+    // tiny UX: footer year + slider label
+    document.getElementById("yearNow").textContent = new Date().getFullYear();
+    const slider = document.getElementById("subsidySlider");
+    const sliderValue = document.getElementById("sliderValue");
+    if (slider && sliderValue) {
+      sliderValue.textContent = slider.value + "%";
+      slider.addEventListener("input", () => sliderValue.textContent = slider.value + "%");
+    }
+  </script>
+
+</body>
+
+</html>
